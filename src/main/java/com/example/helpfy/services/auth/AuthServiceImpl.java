@@ -41,4 +41,13 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtUtils.generateToken(user.getEmail());
         return new LoginResponse(token, userResponse);
     }
+
+    @Override
+    public LoginResponse oauth2(String email) {
+        User user = userRepository.findByEmail(email).get();
+
+        var userResponse = userMapper.fromUserToResponse(user);
+        String token = jwtUtils.generateToken(user.getEmail());
+        return new LoginResponse(token, userResponse);
+    }
 }

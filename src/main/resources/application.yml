@@ -17,7 +17,19 @@ spring:
   web:
     resources:
       static-locations: file:pictures/
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: ${GOOGLE_CI:765141960652-1056kh7b79p9omu0f87iocrhgn9vf0t7.apps.googleusercontent.com}
+            clientSecret: ${GOOGLE_CS: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}
+            scope: profile, email
+
 server:
   error:
     include-message: always
+  port: 8081
 jwt.secret: ${JWT_SECRET:tokendev}
+#  security.oauth2.client.preEstablishedRedirectUri=http://localhost:9090/callback
+#  security.oauth2.client.useCurrentUri=false

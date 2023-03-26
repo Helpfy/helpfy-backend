@@ -48,18 +48,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
                 .antMatchers(SWAGGER_AUTH_WHITE_LIST).permitAll()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/**/oauth2/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/users/**").permitAll()
                 .antMatchers("/search").permitAll()
+                .antMatchers("/auth").permitAll()
+                .antMatchers("/login**").permitAll()
+                .antMatchers("/login-success").permitAll()
                 .antMatchers("/pictures/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/questions/{questionId}").permitAll()
-                .anyRequest()
-                .authenticated().and().exceptionHandling()
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)).and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        http.cors().configurationSource(corsConfigurationSource());
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login()
+                    .defaultSuccessUrl("/login-success")
+                    .failureUrl("/login-fail")
+                .and()
+                .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                .and()
+                .cors().configurationSource(corsConfigurationSource());
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
